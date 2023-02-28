@@ -26,9 +26,9 @@ export class AuthenticateUserUseCase {
 
     const token = sign({}, process.env.JWT_KEY!, {
       subject: alreadyExistUser.id,
-      expiresIn: "20s",
+      expiresIn: "30s",
     });
 
-    return token;
+    return { user: alreadyExistUser, token };
   }
 }

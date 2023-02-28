@@ -12,8 +12,6 @@ export class AuthenticateUserController<T> {
     const bodyParsed = userBody.parse(req.body);
 
     const authenticateUserUseCase = new AuthenticateUserUseCase();
-    const token = await authenticateUserUseCase.execute(bodyParsed);
-
-    return { token };
+    return await authenticateUserUseCase.execute(bodyParsed);
   }
 }
