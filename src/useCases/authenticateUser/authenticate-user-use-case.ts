@@ -1,6 +1,8 @@
 import { client } from "../../lib/prisma";
 import { compare } from "bcrypt";
 import { sign } from "jsonwebtoken";
+import { GenerateRefreshTokenUseCase } from "../generateRefreshToken/generate-refresh-token-use-case";
+import { GenerateRefreshTokenProvider } from "../generateRefreshToken/generate-refresh-token-provider";
 
 interface IUser {
   email: string;
@@ -29,6 +31,18 @@ export class AuthenticateUserUseCase {
       expiresIn: "30s",
     });
 
-    return { user: alreadyExistUser, token };
+    await client.refreshToken.deleteMany({
+      where: {
+        user_id: alreadyExistUser.id,
+      },
+    });
+
+    const generateRefreshTokenProvider = new GenerateRefreshTokenProvider();
+
+    const refreshToken = await generateRefreshTokenProvider.generate(
+      alreadyExistUser.id
+    );
+
+    return { user: alreadyExistUser, refreshToken };
   }
 }
